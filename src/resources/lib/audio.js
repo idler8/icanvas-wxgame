@@ -26,7 +26,7 @@
 // load(): this;
 // unload(): void;
 import * as Core from '@icanvas/core';
-export class WxgameAudio extends Core.Resource.Loader {
+export default class WxgameAudio extends Core.Resource.Loader {
 	static Error = wx.createInnerAudioContext();
 	//获取音频
 	get(key) {

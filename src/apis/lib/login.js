@@ -1,4 +1,4 @@
-import { UtilWxgameVary } from '../../utils/index.js';
+import { Vary } from '../../utils/index.js';
 
 export default function LoginFactory(
 	defaultStyle = {
@@ -38,10 +38,10 @@ export default function LoginFactory(
 		UserInfoButton.show();
 		return UserInfoButton;
 	};
-	let openSetting = UtilWxgameVary('openSetting');
-	let authorize = UtilWxgameVary('authorize');
-	let getUserInfo = UtilWxgameVary('getUserInfo');
-	let login = UtilWxgameVary('login');
+	let openSetting = Vary('openSetting');
+	let authorize = Vary('authorize');
+	let getUserInfo = Vary('getUserInfo');
+	let login = Vary('login');
 	//打开权限设置界面
 	let SetAuthorize = function(scope) {
 		return openSetting()
