@@ -18,16 +18,15 @@ es6调用完整支持Tree Shake
 ## API列表
 
 ### 资源加载包
-#### [微信图片资源管理类](src/resources/lib/image.js#L25)`ICanvasWxgame.Resource.Image`
-#### [微信音频资源管理类](src/resources/lib/audio.js#L70)`ICanvasWxgame.Resource.Audio`
+#### [微信图片资源管理器构造函数](src/resources/lib/image.js#L25)`ICanvasWxgame.ResourceImage`
+#### [微信音频资源管理器构造函数](src/resources/lib/audio.js#L70)`ICanvasWxgame.ResourceAudio`
 
 ### 特性包
-#### [微信生成Canvas方法](src/apis/wxgame/canvas.js)`ICanvasWxgame.Api.Canvas`
-#### [微信获取系统属性方法](src/apis/wxgame/system.js)`ICanvasWxgame.Api.System`
-#### [微信网络请求类](src/apis/wxgame/request.js)`ICanvasWxgame.Api.Request`
-#### [微信登陆工厂方法](src/apis/wxgame/login.js)`ICanvasWxgame.Api.Login`
-#### [浏览器触摸监听传递](src/utils/index.js)`ICanvas.Util.Touch`
+#### [微信生成Canvas方法](src/apis/wxgame/canvas.js)`ICanvasWxgame.ApiCanvas`
+#### [微信获取系统属性方法](src/apis/wxgame/system.js)`ICanvasWxgame.ApiSystem`
+#### [微信网络请求类](src/apis/wxgame/request.js)`ICanvasWxgame.ApiRequest`
+#### [微信登陆工厂方法](src/apis/wxgame/login.js)`ICanvasWxgame.ApiLogin`
+#### [微信触摸监听传递](src/utils/index.js)`ICanvas.ApiTouch`
 
 ### 工具包
-#### [微信触摸监听](src/utils/index.js)`ICanvas.Util.TouchListen`
-#### [微信方法变种工厂](src/utils/index.js)`ICanvas.Util.Vary`
+#### [微信方法变种工厂](src/utils/index.js)`ICanvas.UtilVary`

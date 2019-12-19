@@ -263,14 +263,6 @@
     }(Loader), _temp;
   }
 
-
-
-  var index = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    Image: ImageControlFactory,
-    Audio: AudioControlFactory
-  });
-
   /**
    * 获得一个canvas对象
    *
@@ -339,7 +331,7 @@
    * @param {Any} root 根元素/上下文
    * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
    */
-  function Vary(action) {
+  function UtilVary(action) {
     var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
     var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
@@ -362,11 +354,6 @@
       };
     }
   }
-
-  var index$1 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    Vary: Vary
-  });
 
   function LoginFactory() {
     var defaultStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
@@ -408,10 +395,10 @@
       return UserInfoButton;
     };
 
-    var openSetting = Vary('openSetting');
-    var authorize = Vary('authorize');
-    var getUserInfo = Vary('getUserInfo');
-    var login = Vary('login'); //打开权限设置界面
+    var openSetting = UtilVary('openSetting');
+    var authorize = UtilVary('authorize');
+    var getUserInfo = UtilVary('getUserInfo');
+    var login = UtilVary('login'); //打开权限设置界面
 
     var SetAuthorize = function SetAuthorize(scope) {
       return openSetting().then(function (res) {
@@ -1416,20 +1403,14 @@
     return axios;
   }
 
-
-
-  var index$2 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    Canvas: Canvas,
-    System: System,
-    Touch: TouchListen,
-    Login: LoginFactory,
-    Request: createInstance
-  });
-
-  exports.Api = index$2;
-  exports.Resource = index;
-  exports.Util = index$1;
+  exports.ApiCanvas = Canvas;
+  exports.ApiLogin = LoginFactory;
+  exports.ApiRequest = createInstance;
+  exports.ApiSystem = System;
+  exports.ApiTouch = TouchListen;
+  exports.ResourceAudio = AudioControlFactory;
+  exports.ResourceImage = ImageControlFactory;
+  exports.UtilVary = UtilVary;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

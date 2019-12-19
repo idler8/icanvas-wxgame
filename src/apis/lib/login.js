@@ -1,4 +1,4 @@
-import { Vary } from '../../utils/index.js';
+import { UtilVary as Vary } from '../../utils/index.js';
 
 export default function LoginFactory(
 	defaultStyle = {

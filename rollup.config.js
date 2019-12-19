@@ -14,7 +14,6 @@ export default [
 		],
 		external: ['wx'],
 		plugins: [
-			resolve(),
 			json(),
 			babel({
 				babelrc: false,
@@ -38,7 +37,7 @@ export default [
 		],
 		external: ['wx'],
 		plugins: [
-			resolve(),
+			resolve({ preferBuiltins: true }),
 			json(),
 			babel({
 				babelrc: false,
