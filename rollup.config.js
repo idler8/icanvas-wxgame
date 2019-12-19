@@ -38,7 +38,6 @@ export default [
 		],
 		external: ['wx'],
 		plugins: [
-			resolve({ preferBuiltins: true, browser: true }),
 			json(),
 			babel({
 				babelrc: false,

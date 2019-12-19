@@ -8,10 +8,12 @@ import _assertThisInitialized from '@babel/runtime/helpers/assertThisInitialized
 import _defineProperty from '@babel/runtime/helpers/defineProperty';
 import qs from 'qs';
 
+var Loader = Resource.Loader;
+
 var WxgameImage =
 /*#__PURE__*/
-function (_Core$Resource$Loader) {
-  _inherits(WxgameImage, _Core$Resource$Loader);
+function (_Loader) {
+  _inherits(WxgameImage, _Loader);
 
   function WxgameImage() {
     _classCallCheck(this, WxgameImage);
@@ -44,12 +46,14 @@ function (_Core$Resource$Loader) {
   }]);
 
   return WxgameImage;
-}(Resource.Loader);
+}(Loader);
+
+var Loader$1 = Resource.Loader;
 
 var WxgameAudio =
 /*#__PURE__*/
-function (_Core$Resource$Loader) {
-  _inherits(WxgameAudio, _Core$Resource$Loader);
+function (_Loader) {
+  _inherits(WxgameAudio, _Loader);
 
   function WxgameAudio() {
     var _getPrototypeOf2;
@@ -112,7 +116,7 @@ function (_Core$Resource$Loader) {
   }]);
 
   return WxgameAudio;
-}(Resource.Loader);
+}(Loader$1);
 
 
 
