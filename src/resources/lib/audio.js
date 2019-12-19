@@ -25,40 +25,41 @@
 // state(): 'unloaded' | 'loading' | 'loaded';
 // load(): this;
 // unload(): void;
-import * as Core from '@icanvas/core';
-export default class WxgameAudio extends Core.Resource.Loader {
-	//获取音频
-	get(key) {
-		return this.resources[key] || WxgameAudio.Error || (WxgameAudio.Error = wx.createInnerAudioContext());
-	}
-	//静音
-	_mute = false;
-	get mute() {
-		return this._mute;
-	}
-	set mute(mute) {
-		this._mute = mute;
-	}
-	//设置音量
-	set volume(v = 0) {
-		//TODO
-	}
-	get volume() {
-		return; //TODO
-	}
-	Set(url) {
-		return new Promise((resolve, reject) => {
-			//TODO audio 接口附加
-			let audio = wx.createInnerAudioContext();
-			audio.loop = false;
-			audio.autoplay = false;
-			audio.onCanplay(function() {
-				resolve(audio);
+export default function AudioControlFactory(Loader) {
+	return class AudioControl extends Loader {
+		//获取音频
+		get(key) {
+			return this.resources[key] || AudioControl.Error || (AudioControl.Error = wx.createInnerAudioContext());
+		}
+		//静音
+		_mute = false;
+		get mute() {
+			return this._mute;
+		}
+		set mute(mute) {
+			this._mute = mute;
+		}
+		//设置音量
+		set volume(v = 0) {
+			//TODO
+		}
+		get volume() {
+			return; //TODO
+		}
+		Set(url) {
+			return new Promise((resolve, reject) => {
+				//TODO audio 接口附加
+				let audio = wx.createInnerAudioContext();
+				audio.loop = false;
+				audio.autoplay = false;
+				audio.onCanplay(function() {
+					resolve(audio);
+				});
+				audio.onError(function(e) {
+					reject(e);
+				});
+				audio.src = url;
 			});
-			audio.onError(function(e) {
-				reject(e);
-			});
-			audio.src = url;
-		});
-	}
+		}
+	};
 }
