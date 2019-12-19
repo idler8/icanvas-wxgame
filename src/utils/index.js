@@ -1,14 +1,4 @@
 /**
- * 微信触摸事件和Touch类进行关联
- * @param {ICanvas.UtilTouch} Touch
- */
-export function TouchListen(Touch) {
-	wx.onTouchStart(e => Touch.onTouchStart(e));
-	wx.onTouchMove(e => Touch.onTouchMove(e));
-	wx.onTouchEnd(e => Touch.onTouchEnd(e));
-	wx.onTouchCancel(e => Touch.onTouchEnd(e));
-}
-/**
  * 将微信方法进行变种
  * @param {string} action 方法名
  * @param {Any} root 根元素/上下文

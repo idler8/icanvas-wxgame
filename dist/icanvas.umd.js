@@ -115,23 +115,6 @@
 
   var inherits = _inherits;
 
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
-  var defineProperty = _defineProperty;
-
   function _isNativeFunction(fn) {
     return Function.toString.call(fn).indexOf("[native code]") !== -1;
   }
@@ -209,6 +192,23 @@
 
   module.exports = _wrapNativeSuper;
   });
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  var defineProperty = _defineProperty;
 
   function _superPropBase(object, property) {
     while (!Object.prototype.hasOwnProperty.call(object, property)) {
@@ -4277,7 +4277,7 @@
 
   defineProperty(ImageControl$1, "Error", null);
 
-  var AudioControl$1 =
+  var AudioControl =
   /*#__PURE__*/
   function (_Loader) {
     inherits(AudioControl, _Loader);
@@ -4347,7 +4347,7 @@
     return AudioControl;
   }(Loader);
 
-  defineProperty(AudioControl$1, "Error", new howler_2());
+  defineProperty(AudioControl, "Error", new howler_2());
 
 
 
@@ -4355,7 +4355,7 @@
   	__proto__: null,
   	Loader: Loader,
   	Image: ImageControl$1,
-  	Audio: AudioControl$1
+  	Audio: AudioControl
   });
 
   var WxgameImage =
@@ -4389,14 +4389,12 @@
     }, {
       key: "get",
       value: function get(key) {
-        return this.resources[key] || ImageControl.Error;
+        return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
       }
     }]);
 
     return WxgameImage;
   }(index$4.Loader);
-
-  defineProperty(WxgameImage, "Error", wx.createImage());
 
   var WxgameAudio =
   /*#__PURE__*/
@@ -4425,7 +4423,7 @@
       key: "get",
       //获取音频
       value: function get(key) {
-        return this.resources[key] || AudioControl.Error;
+        return this.resources[key] || WxgameAudio.Error || (WxgameAudio.Error = wx.createInnerAudioContext());
       } //静音
 
     }, {
@@ -4467,8 +4465,6 @@
     return WxgameAudio;
   }(index$4.Loader);
 
-  defineProperty(WxgameAudio, "Error", wx.createInnerAudioContext());
-
 
 
   var index = /*#__PURE__*/Object.freeze({
@@ -4486,9 +4482,9 @@
    * key取share则获得主域内开放canvas
    * key取shared则获得开发域内开放canvas
    */
-  function GetCanvas(key) {
-    if (!GetCanvas.main && key != 'main') GetCanvas('main');
-    if (key && GetCanvas[key]) return GetCanvas[key];
+  function Canvas(key) {
+    if (!Canvas.main && key != 'main') Canvas('main');
+    if (key && Canvas[key]) return Canvas[key];
     var canvas = null;
 
     if (key == 'share' && typeof wx.getOpenDataContext == 'function') {
@@ -4505,7 +4501,7 @@
       canvas = wx.createCanvas();
     }
 
-    return key ? GetCanvas[key] = canvas : canvas;
+    return key ? Canvas[key] = canvas : canvas;
   }
 
   /**
@@ -4540,30 +4536,11 @@
   }
 
   /**
-   * 微信触摸事件和Touch类进行关联
-   * @param {ICanvas.UtilTouch} Touch
-   */
-  function TouchListen$1(Touch) {
-    wx.onTouchStart(function (e) {
-      return Touch.onTouchStart(e);
-    });
-    wx.onTouchMove(function (e) {
-      return Touch.onTouchMove(e);
-    });
-    wx.onTouchEnd(function (e) {
-      return Touch.onTouchEnd(e);
-    });
-    wx.onTouchCancel(function (e) {
-      return Touch.onTouchEnd(e);
-    });
-  }
-  /**
    * 将微信方法进行变种
    * @param {string} action 方法名
    * @param {Any} root 根元素/上下文
    * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
    */
-
   function Vary(action) {
     var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
     var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
@@ -4590,7 +4567,6 @@
 
   var index$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    TouchListen: TouchListen$1,
     Vary: Vary
   });
 
@@ -5646,7 +5622,7 @@
 
   var index$2 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    Canvas: GetCanvas,
+    Canvas: Canvas,
     System: System,
     Touch: TouchListen,
     Login: LoginFactory,

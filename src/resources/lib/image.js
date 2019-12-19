@@ -1,6 +1,5 @@
 import * as Core from '@icanvas/core';
 export default class WxgameImage extends Core.Resource.Loader {
-	static Error = wx.createImage();
 	Set(url) {
 		return new Promise((resolve, reject) => {
 			let image = wx.createImage();
@@ -14,6 +13,6 @@ export default class WxgameImage extends Core.Resource.Loader {
 		});
 	}
 	get(key) {
-		return this.resources[key] || ImageControl.Error;
+		return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
 	}
 }

@@ -3,9 +3,9 @@ import _createClass from '@babel/runtime/helpers/createClass';
 import _possibleConstructorReturn from '@babel/runtime/helpers/possibleConstructorReturn';
 import _getPrototypeOf from '@babel/runtime/helpers/getPrototypeOf';
 import _inherits from '@babel/runtime/helpers/inherits';
-import _defineProperty from '@babel/runtime/helpers/defineProperty';
 import { Resource } from '@icanvas/core';
 import _assertThisInitialized from '@babel/runtime/helpers/assertThisInitialized';
+import _defineProperty from '@babel/runtime/helpers/defineProperty';
 import qs from 'qs';
 
 var WxgameImage =
@@ -39,14 +39,12 @@ function (_Core$Resource$Loader) {
   }, {
     key: "get",
     value: function get(key) {
-      return this.resources[key] || ImageControl.Error;
+      return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
     }
   }]);
 
   return WxgameImage;
 }(Resource.Loader);
-
-_defineProperty(WxgameImage, "Error", wx.createImage());
 
 var WxgameAudio =
 /*#__PURE__*/
@@ -75,7 +73,7 @@ function (_Core$Resource$Loader) {
     key: "get",
     //获取音频
     value: function get(key) {
-      return this.resources[key] || AudioControl.Error;
+      return this.resources[key] || WxgameAudio.Error || (WxgameAudio.Error = wx.createInnerAudioContext());
     } //静音
 
   }, {
@@ -117,8 +115,6 @@ function (_Core$Resource$Loader) {
   return WxgameAudio;
 }(Resource.Loader);
 
-_defineProperty(WxgameAudio, "Error", wx.createInnerAudioContext());
-
 
 
 var index = /*#__PURE__*/Object.freeze({
@@ -136,9 +132,9 @@ var index = /*#__PURE__*/Object.freeze({
  * key取share则获得主域内开放canvas
  * key取shared则获得开发域内开放canvas
  */
-function GetCanvas(key) {
-  if (!GetCanvas.main && key != 'main') GetCanvas('main');
-  if (key && GetCanvas[key]) return GetCanvas[key];
+function Canvas(key) {
+  if (!Canvas.main && key != 'main') Canvas('main');
+  if (key && Canvas[key]) return Canvas[key];
   var canvas = null;
 
   if (key == 'share' && typeof wx.getOpenDataContext == 'function') {
@@ -155,7 +151,7 @@ function GetCanvas(key) {
     canvas = wx.createCanvas();
   }
 
-  return key ? GetCanvas[key] = canvas : canvas;
+  return key ? Canvas[key] = canvas : canvas;
 }
 
 /**
@@ -190,30 +186,11 @@ function TouchListen(Touch) {
 }
 
 /**
- * 微信触摸事件和Touch类进行关联
- * @param {ICanvas.UtilTouch} Touch
- */
-function TouchListen$1(Touch) {
-  wx.onTouchStart(function (e) {
-    return Touch.onTouchStart(e);
-  });
-  wx.onTouchMove(function (e) {
-    return Touch.onTouchMove(e);
-  });
-  wx.onTouchEnd(function (e) {
-    return Touch.onTouchEnd(e);
-  });
-  wx.onTouchCancel(function (e) {
-    return Touch.onTouchEnd(e);
-  });
-}
-/**
  * 将微信方法进行变种
  * @param {string} action 方法名
  * @param {Any} root 根元素/上下文
  * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
  */
-
 function Vary(action) {
   var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
   var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
@@ -240,7 +217,6 @@ function Vary(action) {
 
 var index$1 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	TouchListen: TouchListen$1,
 	Vary: Vary
 });
 
@@ -509,7 +485,7 @@ function createInstance(defaultConfig) {
 
 var index$2 = /*#__PURE__*/Object.freeze({
 	__proto__: null,
-	Canvas: GetCanvas,
+	Canvas: Canvas,
 	System: System,
 	Touch: TouchListen,
 	Login: LoginFactory,

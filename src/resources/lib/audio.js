@@ -27,10 +27,9 @@
 // unload(): void;
 import * as Core from '@icanvas/core';
 export default class WxgameAudio extends Core.Resource.Loader {
-	static Error = wx.createInnerAudioContext();
 	//获取音频
 	get(key) {
-		return this.resources[key] || AudioControl.Error;
+		return this.resources[key] || WxgameAudio.Error || (WxgameAudio.Error = wx.createInnerAudioContext());
 	}
 	//静音
 	_mute = false;
