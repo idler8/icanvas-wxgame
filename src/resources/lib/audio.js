@@ -38,7 +38,6 @@ export default class WxgameAudio extends Core.Resource.Loader {
 	}
 	set mute(mute) {
 		this._mute = mute;
-		mute ? this.poolMute(true).channelMute(true) : this.channelContinue(true);
 	}
 	//设置音量
 	set volume(v = 0) {

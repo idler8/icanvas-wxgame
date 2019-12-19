@@ -39,7 +39,7 @@ function (_Core$Resource$Loader) {
   }, {
     key: "get",
     value: function get(key) {
-      return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
+      return this.resources[key] || WxgameImage.Error || (WxgameImage.Error = wx.createImage());
     }
   }]);
 
@@ -100,7 +100,6 @@ function (_Core$Resource$Loader) {
     },
     set: function set(mute) {
       this._mute = mute;
-      mute ? this.poolMute(true).channelMute(true) : this.channelContinue(true);
     } //设置音量
 
   }, {

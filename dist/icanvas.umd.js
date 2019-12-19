@@ -4237,7 +4237,7 @@
     return Loader;
   }(eventemitter3);
 
-  var ImageControl$1 =
+  var ImageControl =
   /*#__PURE__*/
   function (_Loader) {
     inherits(ImageControl, _Loader);
@@ -4275,7 +4275,7 @@
     return ImageControl;
   }(Loader);
 
-  defineProperty(ImageControl$1, "Error", null);
+  defineProperty(ImageControl, "Error", null);
 
   var AudioControl =
   /*#__PURE__*/
@@ -4354,7 +4354,7 @@
   var index$4 = /*#__PURE__*/Object.freeze({
   	__proto__: null,
   	Loader: Loader,
-  	Image: ImageControl$1,
+  	Image: ImageControl,
   	Audio: AudioControl
   });
 
@@ -4389,7 +4389,7 @@
     }, {
       key: "get",
       value: function get(key) {
-        return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
+        return this.resources[key] || WxgameImage.Error || (WxgameImage.Error = wx.createImage());
       }
     }]);
 
@@ -4450,7 +4450,6 @@
       },
       set: function set(mute) {
         this._mute = mute;
-        mute ? this.poolMute(true).channelMute(true) : this.channelContinue(true);
       } //设置音量
 
     }, {

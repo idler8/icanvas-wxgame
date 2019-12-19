@@ -13,6 +13,6 @@ export default class WxgameImage extends Core.Resource.Loader {
 		});
 	}
 	get(key) {
-		return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
+		return this.resources[key] || WxgameImage.Error || (WxgameImage.Error = wx.createImage());
 	}
 }
