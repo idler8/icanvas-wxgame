@@ -4,6 +4,23 @@
   (global = global || self, factory(global.ICanvasWxgame = {}));
 }(this, (function (exports) { 'use strict';
 
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      });
+    } else {
+      obj[key] = value;
+    }
+
+    return obj;
+  }
+
+  var defineProperty = _defineProperty;
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -113,64 +130,6 @@
 
   var inherits = _inherits;
 
-  function ImageControlFactory(Loader) {
-    return (
-      /*#__PURE__*/
-      function (_Loader) {
-        inherits(ImageControl, _Loader);
-
-        function ImageControl() {
-          classCallCheck(this, ImageControl);
-
-          return possibleConstructorReturn(this, getPrototypeOf(ImageControl).apply(this, arguments));
-        }
-
-        createClass(ImageControl, [{
-          key: "Set",
-          value: function Set(url) {
-            return new Promise(function (resolve, reject) {
-              var image = wx.createImage();
-
-              image.onload = function () {
-                resolve(image);
-              };
-
-              image.onerror = function (e) {
-                reject(e);
-              };
-
-              image.key = image.src = url;
-            });
-          }
-        }, {
-          key: "get",
-          value: function get(key) {
-            return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
-          }
-        }]);
-
-        return ImageControl;
-      }(Loader)
-    );
-  }
-
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
-  var defineProperty = _defineProperty;
-
   // play(spriteOrId?: string | number): number; // .play() is not chainable; the other methods are
   // pause(id?: number): this;
   // stop(id?: number): this;
@@ -263,6 +222,47 @@
     }(Loader), _temp;
   }
 
+  function ImageControlFactory(Loader) {
+    return (
+      /*#__PURE__*/
+      function (_Loader) {
+        inherits(ImageControl, _Loader);
+
+        function ImageControl() {
+          classCallCheck(this, ImageControl);
+
+          return possibleConstructorReturn(this, getPrototypeOf(ImageControl).apply(this, arguments));
+        }
+
+        createClass(ImageControl, [{
+          key: "Set",
+          value: function Set(url) {
+            return new Promise(function (resolve, reject) {
+              var image = wx.createImage();
+
+              image.onload = function () {
+                resolve(image);
+              };
+
+              image.onerror = function (e) {
+                reject(e);
+              };
+
+              image.key = image.src = url;
+            });
+          }
+        }, {
+          key: "get",
+          value: function get(key) {
+            return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
+          }
+        }]);
+
+        return ImageControl;
+      }(Loader)
+    );
+  }
+
   /**
    * 获得一个canvas对象
    *
@@ -310,50 +310,60 @@
     return System;
   }
 
-  function TouchListen(Touch) {
-    wx.onTouchStart(function (e) {
-      return Touch.onTouchStart(e);
-    });
-    wx.onTouchMove(function (e) {
-      return Touch.onTouchMove(e);
-    });
-    wx.onTouchEnd(function (e) {
-      return Touch.onTouchEnd(e);
-    });
-    wx.onTouchCancel(function (e) {
-      return Touch.onTouchEnd(e);
-    });
+  function TouchListen() {
+    return function (event) {
+      wx.onTouchStart(function (e) {
+        return event.start(e);
+      });
+      wx.onTouchMove(function (e) {
+        return event.move(e);
+      });
+      wx.onTouchEnd(function (e) {
+        return event.end(e);
+      });
+      wx.onTouchCancel(function (e) {
+        return event.end(e);
+      });
+    };
   }
 
-  /**
-   * 将微信方法进行变种
-   * @param {string} action 方法名
-   * @param {Any} root 根元素/上下文
-   * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
-   */
-  function UtilVary(action) {
-    var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
-    var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+  var openSetting = function openSetting() {
+    return new Promise(function (success, fail) {
+      return wx.openSetting({
+        success: success,
+        fail: fail
+      });
+    });
+  };
 
-    if (mode == 2) {
-      return root[action];
-    } else if (mode == 1) {
-      return function (args, key) {
-        return new Promise(function (resolve) {
-          return resolve(root[action](key ? defineProperty({}, key, args) : args));
-        });
-      };
-    } else if (mode == 0) {
-      return function (args, key) {
-        return new Promise(function (success, fail) {
-          return root[action](Object.assign({
-            success: success,
-            fail: fail
-          }, key ? defineProperty({}, key, args) : args));
-        });
-      };
-    }
-  }
+  var authorize = function authorize(scope) {
+    return new Promise(function (success, fail) {
+      return wx.authorize({
+        success: success,
+        fail: fail,
+        scope: scope
+      });
+    });
+  };
+
+  var getUserInfo = function getUserInfo() {
+    return new Promise(function (success, fail) {
+      return wx.getUserInfo({
+        success: success,
+        fail: fail,
+        lang: 'zh_CN'
+      });
+    });
+  };
+
+  var login = function login() {
+    return new Promise(function (success, fail) {
+      return wx.login({
+        success: success,
+        fail: fail
+      });
+    });
+  };
 
   function LoginFactory() {
     var defaultStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
@@ -393,12 +403,8 @@
       });
       UserInfoButton.show();
       return UserInfoButton;
-    };
+    }; //打开权限设置界面
 
-    var openSetting = UtilVary('openSetting');
-    var authorize = UtilVary('authorize');
-    var getUserInfo = UtilVary('getUserInfo');
-    var login = UtilVary('login'); //打开权限设置界面
 
     var SetAuthorize = function SetAuthorize(scope) {
       return openSetting().then(function (res) {
@@ -427,7 +433,7 @@
 
 
     Login.GetUserInfo = function (info) {
-      return authorize('scope.userInfo', 'scope')["catch"](function () {
+      return authorize('scope.userInfo')["catch"](function () {
         if (info === true) return SetAuthorize(scope);
         var Button = GetLoginButton(info);
 
@@ -439,7 +445,7 @@
 
         return GetLoginButtonListen(Button);
       }).then(function () {
-        return getUserInfo('zh_CN', 'lang');
+        return getUserInfo();
       }).then(function (res) {
         return res.userInfo;
       });
@@ -1403,14 +1409,45 @@
     return axios;
   }
 
-  exports.ApiCanvas = Canvas;
-  exports.ApiLogin = LoginFactory;
-  exports.ApiRequest = createInstance;
-  exports.ApiSystem = System;
-  exports.ApiTouch = TouchListen;
-  exports.ResourceAudio = AudioControlFactory;
-  exports.ResourceImage = ImageControlFactory;
-  exports.UtilVary = UtilVary;
+  /**
+   * 将微信方法进行变种
+   * @param {string} action 方法名
+   * @param {Any} root 根元素/上下文
+   * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
+   */
+
+  function Vary(action) {
+    var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
+    var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    if (mode == 2) {
+      return root[action];
+    } else if (mode == 1) {
+      return function (args, key) {
+        return new Promise(function (resolve) {
+          return resolve(root[action](key ? defineProperty({}, key, args) : args));
+        });
+      };
+    } else if (mode == 0) {
+      return function (args, key) {
+        return new Promise(function (success, fail) {
+          return root[action](Object.assign({
+            success: success,
+            fail: fail
+          }, key ? defineProperty({}, key, args) : args));
+        });
+      };
+    }
+  }
+
+  exports.AudioControlFactory = AudioControlFactory;
+  exports.Canvas = Canvas;
+  exports.ImageControlFactory = ImageControlFactory;
+  exports.Login = LoginFactory;
+  exports.Request = createInstance;
+  exports.System = System;
+  exports.Touch = TouchListen;
+  exports.Vary = Vary;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

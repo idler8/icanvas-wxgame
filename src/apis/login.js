@@ -1,5 +1,15 @@
-import { UtilVary as Vary } from '../../utils/index.js';
-
+const openSetting = function() {
+	return new Promise((success, fail) => wx.openSetting({ success, fail }));
+};
+const authorize = function(scope) {
+	return new Promise((success, fail) => wx.authorize({ success, fail, scope }));
+};
+const getUserInfo = function() {
+	return new Promise((success, fail) => wx.getUserInfo({ success, fail, lang: 'zh_CN' }));
+};
+const login = function() {
+	return new Promise((success, fail) => wx.login({ success, fail }));
+};
 export default function LoginFactory(
 	defaultStyle = {
 		left: 0,
@@ -38,10 +48,6 @@ export default function LoginFactory(
 		UserInfoButton.show();
 		return UserInfoButton;
 	};
-	let openSetting = Vary('openSetting');
-	let authorize = Vary('authorize');
-	let getUserInfo = Vary('getUserInfo');
-	let login = Vary('login');
 	//打开权限设置界面
 	let SetAuthorize = function(scope) {
 		return openSetting()
@@ -66,7 +72,7 @@ export default function LoginFactory(
 	};
 	//获取用户信息
 	Login.GetUserInfo = function(info) {
-		return authorize('scope.userInfo', 'scope')
+		return authorize('scope.userInfo')
 			.catch(() => {
 				if (info === true) return SetAuthorize(scope);
 				let Button = GetLoginButton(info);
@@ -77,7 +83,7 @@ export default function LoginFactory(
 				};
 				return GetLoginButtonListen(Button);
 			})
-			.then(() => getUserInfo('zh_CN', 'lang'))
+			.then(() => getUserInfo())
 			.then(res => res.userInfo);
 	};
 	return Login;
