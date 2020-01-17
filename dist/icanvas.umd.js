@@ -272,26 +272,26 @@
    * key取share则获得主域内开放canvas
    * key取shared则获得开发域内开放canvas
    */
-  function Canvas(key) {
-    if (!Canvas.main && key != 'main') Canvas('main');
-    if (key && Canvas[key]) return Canvas[key];
-    var canvas = null;
-
-    if (key == 'share' && typeof wx.getOpenDataContext == 'function') {
+  function Canvas(width, height) {
+    if (width == 'share' && typeof wx.getOpenDataContext == 'function') {
       var context = wx.getOpenDataContext();
 
       context.canvas.getContext = function () {
         return context;
       };
 
-      canvas = context.canvas;
-    } else if (key == 'shared' && typeof wx.getSharedCanvas == 'function') {
-      canvas = wx.getSharedCanvas();
-    } else {
-      canvas = wx.createCanvas();
+      return context.canvas;
+    } else if (width == 'shared' && typeof wx.getSharedCanvas == 'function') {
+      return wx.getSharedCanvas();
+    } else if (width == 'main') {
+      return Canvas.main || (Canvas.main = wx.createCanvas());
     }
 
-    return key ? Canvas[key] = canvas : canvas;
+    if (!Canvas.main) Canvas.main = wx.createCanvas();
+    var canvas = wx.createCanvas();
+    if (width > 0) canvas.width = width;
+    if (height > 0) canvas.height = height;
+    return canvas;
   }
 
   /**
@@ -325,133 +325,6 @@
         return event.end(e);
       });
     };
-  }
-
-  var openSetting = function openSetting() {
-    return new Promise(function (success, fail) {
-      return wx.openSetting({
-        success: success,
-        fail: fail
-      });
-    });
-  };
-
-  var authorize = function authorize(scope) {
-    return new Promise(function (success, fail) {
-      return wx.authorize({
-        success: success,
-        fail: fail,
-        scope: scope
-      });
-    });
-  };
-
-  var getUserInfo = function getUserInfo() {
-    return new Promise(function (success, fail) {
-      return wx.getUserInfo({
-        success: success,
-        fail: fail,
-        lang: 'zh_CN'
-      });
-    });
-  };
-
-  var login = function login() {
-    return new Promise(function (success, fail) {
-      return wx.login({
-        success: success,
-        fail: fail
-      });
-    });
-  };
-
-  function LoginFactory() {
-    var defaultStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-      left: 0,
-      top: 0,
-      width: 1000,
-      height: 2000,
-      backgroundColor: 'rgba(0,0,0,0)',
-      borderColor: '#FFFFFF',
-      borderWidth: 0,
-      borderRadius: 0,
-      textAlign: 'center',
-      fontSize: 32,
-      lineHeight: 32
-    };
-
-    //微信用户授权按钮监听
-    var GetLoginButtonListen = function GetLoginButtonListen(UserInfoButton) {
-      return new Promise(function (resolve, reject) {
-        UserInfoButton.offTap();
-        UserInfoButton.onTap(resolve);
-      }).then(function (res) {
-        if (!res.userInfo) return GetLoginButtonListen(UserInfoButton);
-        if (Login.GetUserInfo.Abort) Login.GetUserInfo.Abort();
-        return res.userInfo;
-      });
-    }; //微信用户授权按钮
-
-
-    var GetLoginButton = function GetLoginButton(infoStyle) {
-      var UserInfoButton = wx.createUserInfoButton({
-        type: 'text',
-        text: '',
-        style: Object.assign(defaultStyle, infoStyle),
-        withCredentials: false,
-        lang: 'zh_CN'
-      });
-      UserInfoButton.show();
-      return UserInfoButton;
-    }; //打开权限设置界面
-
-
-    var SetAuthorize = function SetAuthorize(scope) {
-      return openSetting().then(function (res) {
-        return res.authSetting[scope] ? Promise.resolve() : Promise.reject();
-      })["catch"](function () {
-        return SetAuthorize(scope);
-      });
-    }; //微信登陆
-
-
-    var Login = function Login(info) {
-      return login()["catch"](function (err) {
-        wx.showToast({
-          title: '登陆失败，请检查登陆状态',
-          icon: 'none'
-        });
-        return Promise.reject(err);
-      }).then(function (res) {
-        if (!info) return res;
-        return Login.GetUserInfo(info).then(function (user) {
-          res.user = user;
-          return res;
-        });
-      });
-    }; //获取用户信息
-
-
-    Login.GetUserInfo = function (info) {
-      return authorize('scope.userInfo')["catch"](function () {
-        if (info === true) return SetAuthorize(scope);
-        var Button = GetLoginButton(info);
-
-        Login.GetUserInfo.Abort = function () {
-          Button.hide();
-          Button.destroy();
-          delete Login.GetUserInfo.Abort;
-        };
-
-        return GetLoginButtonListen(Button);
-      }).then(function () {
-        return getUserInfo();
-      }).then(function (res) {
-        return res.userInfo;
-      });
-    };
-
-    return Login;
   }
 
   var has = Object.prototype.hasOwnProperty;
@@ -1443,7 +1316,6 @@
   exports.AudioControlFactory = AudioControlFactory;
   exports.Canvas = Canvas;
   exports.ImageControlFactory = ImageControlFactory;
-  exports.Login = LoginFactory;
   exports.Request = createInstance;
   exports.System = System;
   exports.Touch = TouchListen;

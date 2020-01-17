@@ -3,7 +3,6 @@ export { default as ImageControlFactory } from './resources/image.js';
 export { default as Canvas } from './apis/canvas.js';
 export { default as System } from './apis/system.js';
 export { default as Touch } from './apis/touch.js';
-export { default as Login } from './apis/login.js';
 export { default as Request } from './apis/request.js';
 /**
  * 将微信方法进行变种
