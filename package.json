@@ -1,6 +1,6 @@
 {
 	"name": "@icanvas/core-wxgame",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"description": "这是icanvas的核心包",
 	"scripts": {
 		"build": "rollup -c"

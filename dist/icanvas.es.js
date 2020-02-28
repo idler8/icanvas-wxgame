@@ -1,144 +1,7 @@
 import _defineProperty from '@babel/runtime/helpers/defineProperty';
 import _classCallCheck from '@babel/runtime/helpers/classCallCheck';
 import _createClass from '@babel/runtime/helpers/createClass';
-import _possibleConstructorReturn from '@babel/runtime/helpers/possibleConstructorReturn';
-import _getPrototypeOf from '@babel/runtime/helpers/getPrototypeOf';
-import _assertThisInitialized from '@babel/runtime/helpers/assertThisInitialized';
-import _inherits from '@babel/runtime/helpers/inherits';
 import qs from 'qs';
-
-// play(spriteOrId?: string | number): number; // .play() is not chainable; the other methods are
-// pause(id?: number): this;
-// stop(id?: number): this;
-// mute(): boolean;
-// mute(muted: boolean, id?: number): this;
-// volume(): number;
-// volume(idOrSetVolume: number): this | number;
-// volume(volume: number, id: number): this;
-// fade(from: number, to: number, duration: number, id?: number): this;
-// rate(): number;
-// rate(idOrSetRate: number): this | number;
-// rate(rate: number, id: number): this;
-// seek(seek?: number, id?: number): this | number;
-// loop(id?: number): boolean;
-// loop(loop: boolean, id?: number): this;
-// playing(id?: number): boolean;
-// duration(id?: number): number;
-// state(): 'unloaded' | 'loading' | 'loaded';
-// load(): this;
-// unload(): void;
-function AudioControlFactory(Loader) {
-  var _temp;
-
-  return _temp =
-  /*#__PURE__*/
-  function (_Loader) {
-    _inherits(AudioControl, _Loader);
-
-    function AudioControl() {
-      var _getPrototypeOf2;
-
-      var _this;
-
-      _classCallCheck(this, AudioControl);
-
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(AudioControl)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-      _defineProperty(_assertThisInitialized(_this), "_mute", false);
-
-      return _this;
-    }
-
-    _createClass(AudioControl, [{
-      key: "get",
-      //获取音频
-      value: function get(key) {
-        return this.resources[key] || AudioControl.Error || (AudioControl.Error = wx.createInnerAudioContext());
-      } //静音
-
-    }, {
-      key: "Set",
-      value: function Set(url) {
-        return new Promise(function (resolve, reject) {
-          //TODO audio 接口附加
-          var audio = wx.createInnerAudioContext();
-          audio.loop = false;
-          audio.autoplay = false;
-          audio.onCanplay(function () {
-            resolve(audio);
-          });
-          audio.onError(function (e) {
-            reject(e);
-          });
-          audio.src = url;
-        });
-      }
-    }, {
-      key: "mute",
-      get: function get() {
-        return this._mute;
-      },
-      set: function set(mute) {
-        this._mute = mute;
-      } //设置音量
-
-    }, {
-      key: "volume",
-      set: function set() {//TODO
-      },
-      get: function get() {
-        return; //TODO
-      }
-    }]);
-
-    return AudioControl;
-  }(Loader), _temp;
-}
-
-function ImageControlFactory(Loader) {
-  return (
-    /*#__PURE__*/
-    function (_Loader) {
-      _inherits(ImageControl, _Loader);
-
-      function ImageControl() {
-        _classCallCheck(this, ImageControl);
-
-        return _possibleConstructorReturn(this, _getPrototypeOf(ImageControl).apply(this, arguments));
-      }
-
-      _createClass(ImageControl, [{
-        key: "Set",
-        value: function Set(url) {
-          return new Promise(function (resolve, reject) {
-            var image = wx.createImage();
-
-            image.onload = function () {
-              resolve(image);
-            };
-
-            image.onerror = function (e) {
-              reject(e);
-            };
-
-            image.key = image.src = url;
-          });
-        }
-      }, {
-        key: "get",
-        value: function get(key) {
-          return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
-        }
-      }]);
-
-      return ImageControl;
-    }(Loader)
-  );
-}
 
 /**
  * 获得一个canvas对象
@@ -203,6 +66,73 @@ function TouchListen() {
     });
   };
 }
+
+var Image =
+/*#__PURE__*/
+function () {
+  function Image() {
+    _classCallCheck(this, Image);
+  }
+
+  _createClass(Image, [{
+    key: "load",
+    value: function load(url) {
+      return new Promise(function (resolve, reject) {
+        var image = wx.createImage();
+
+        image.onload = function () {
+          resolve(image);
+        };
+
+        image.onerror = function (e) {
+          reject(e);
+        };
+
+        image.key = image.src = url;
+      });
+    }
+  }]);
+
+  return Image;
+}();
+
+var Audio =
+/*#__PURE__*/
+function () {
+  function Audio() {
+    _classCallCheck(this, Audio);
+  }
+
+  _createClass(Audio, [{
+    key: "load",
+    value: function load(url) {
+      return new Promise(function (resolve, reject) {
+        var audio = wx.createInnerAudioContext();
+        audio.loop = false;
+        audio.autoplay = false;
+        audio.onCanplay(function () {
+          resolve(audio);
+        });
+        audio.onError(function (e) {
+          reject(e);
+        });
+        audio.src = url;
+      });
+    }
+  }, {
+    key: "mute",
+    value: function mute(_mute) {
+      return;
+    }
+  }, {
+    key: "volume",
+    value: function volume(v) {
+      return;
+    }
+  }]);
+
+  return Audio;
+}();
 
 var qsConfig = {
   arrayFormat: 'indices',
@@ -403,4 +333,4 @@ function Vary(action) {
   }
 }
 
-export { AudioControlFactory, Canvas, ImageControlFactory, createInstance as Request, System, TouchListen as Touch, Vary };
+export { Audio, Canvas, Image, createInstance as Request, System, TouchListen as Touch, Vary };

@@ -21,248 +21,6 @@
 
   var defineProperty = _defineProperty;
 
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  var classCallCheck = _classCallCheck;
-
-  function _defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  function _createClass(Constructor, protoProps, staticProps) {
-    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) _defineProperties(Constructor, staticProps);
-    return Constructor;
-  }
-
-  var createClass = _createClass;
-
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
-  }
-
-  var _typeof_1 = createCommonjsModule(function (module) {
-  function _typeof(obj) {
-    if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-      module.exports = _typeof = function _typeof(obj) {
-        return typeof obj;
-      };
-    } else {
-      module.exports = _typeof = function _typeof(obj) {
-        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-      };
-    }
-
-    return _typeof(obj);
-  }
-
-  module.exports = _typeof;
-  });
-
-  function _assertThisInitialized(self) {
-    if (self === void 0) {
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-
-    return self;
-  }
-
-  var assertThisInitialized = _assertThisInitialized;
-
-  function _possibleConstructorReturn(self, call) {
-    if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
-      return call;
-    }
-
-    return assertThisInitialized(self);
-  }
-
-  var possibleConstructorReturn = _possibleConstructorReturn;
-
-  var getPrototypeOf = createCommonjsModule(function (module) {
-  function _getPrototypeOf(o) {
-    module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-      return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return _getPrototypeOf(o);
-  }
-
-  module.exports = _getPrototypeOf;
-  });
-
-  var setPrototypeOf = createCommonjsModule(function (module) {
-  function _setPrototypeOf(o, p) {
-    module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-      o.__proto__ = p;
-      return o;
-    };
-
-    return _setPrototypeOf(o, p);
-  }
-
-  module.exports = _setPrototypeOf;
-  });
-
-  function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function");
-    }
-
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        writable: true,
-        configurable: true
-      }
-    });
-    if (superClass) setPrototypeOf(subClass, superClass);
-  }
-
-  var inherits = _inherits;
-
-  // play(spriteOrId?: string | number): number; // .play() is not chainable; the other methods are
-  // pause(id?: number): this;
-  // stop(id?: number): this;
-  // mute(): boolean;
-  // mute(muted: boolean, id?: number): this;
-  // volume(): number;
-  // volume(idOrSetVolume: number): this | number;
-  // volume(volume: number, id: number): this;
-  // fade(from: number, to: number, duration: number, id?: number): this;
-  // rate(): number;
-  // rate(idOrSetRate: number): this | number;
-  // rate(rate: number, id: number): this;
-  // seek(seek?: number, id?: number): this | number;
-  // loop(id?: number): boolean;
-  // loop(loop: boolean, id?: number): this;
-  // playing(id?: number): boolean;
-  // duration(id?: number): number;
-  // state(): 'unloaded' | 'loading' | 'loaded';
-  // load(): this;
-  // unload(): void;
-  function AudioControlFactory(Loader) {
-    var _temp;
-
-    return _temp =
-    /*#__PURE__*/
-    function (_Loader) {
-      inherits(AudioControl, _Loader);
-
-      function AudioControl() {
-        var _getPrototypeOf2;
-
-        var _this;
-
-        classCallCheck(this, AudioControl);
-
-        for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
-        }
-
-        _this = possibleConstructorReturn(this, (_getPrototypeOf2 = getPrototypeOf(AudioControl)).call.apply(_getPrototypeOf2, [this].concat(args)));
-
-        defineProperty(assertThisInitialized(_this), "_mute", false);
-
-        return _this;
-      }
-
-      createClass(AudioControl, [{
-        key: "get",
-        //获取音频
-        value: function get(key) {
-          return this.resources[key] || AudioControl.Error || (AudioControl.Error = wx.createInnerAudioContext());
-        } //静音
-
-      }, {
-        key: "Set",
-        value: function Set(url) {
-          return new Promise(function (resolve, reject) {
-            //TODO audio 接口附加
-            var audio = wx.createInnerAudioContext();
-            audio.loop = false;
-            audio.autoplay = false;
-            audio.onCanplay(function () {
-              resolve(audio);
-            });
-            audio.onError(function (e) {
-              reject(e);
-            });
-            audio.src = url;
-          });
-        }
-      }, {
-        key: "mute",
-        get: function get() {
-          return this._mute;
-        },
-        set: function set(mute) {
-          this._mute = mute;
-        } //设置音量
-
-      }, {
-        key: "volume",
-        set: function set() {//TODO
-        },
-        get: function get() {
-          return; //TODO
-        }
-      }]);
-
-      return AudioControl;
-    }(Loader), _temp;
-  }
-
-  function ImageControlFactory(Loader) {
-    return (
-      /*#__PURE__*/
-      function (_Loader) {
-        inherits(ImageControl, _Loader);
-
-        function ImageControl() {
-          classCallCheck(this, ImageControl);
-
-          return possibleConstructorReturn(this, getPrototypeOf(ImageControl).apply(this, arguments));
-        }
-
-        createClass(ImageControl, [{
-          key: "Set",
-          value: function Set(url) {
-            return new Promise(function (resolve, reject) {
-              var image = wx.createImage();
-
-              image.onload = function () {
-                resolve(image);
-              };
-
-              image.onerror = function (e) {
-                reject(e);
-              };
-
-              image.key = image.src = url;
-            });
-          }
-        }, {
-          key: "get",
-          value: function get(key) {
-            return this.resources[key] || ImageControl.Error || (ImageControl.Error = wx.createImage());
-          }
-        }]);
-
-        return ImageControl;
-      }(Loader)
-    );
-  }
-
   /**
    * 获得一个canvas对象
    *
@@ -326,6 +84,99 @@
       });
     };
   }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var classCallCheck = _classCallCheck;
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    return Constructor;
+  }
+
+  var createClass = _createClass;
+
+  var Image =
+  /*#__PURE__*/
+  function () {
+    function Image() {
+      classCallCheck(this, Image);
+    }
+
+    createClass(Image, [{
+      key: "load",
+      value: function load(url) {
+        return new Promise(function (resolve, reject) {
+          var image = wx.createImage();
+
+          image.onload = function () {
+            resolve(image);
+          };
+
+          image.onerror = function (e) {
+            reject(e);
+          };
+
+          image.key = image.src = url;
+        });
+      }
+    }]);
+
+    return Image;
+  }();
+
+  var Audio =
+  /*#__PURE__*/
+  function () {
+    function Audio() {
+      classCallCheck(this, Audio);
+    }
+
+    createClass(Audio, [{
+      key: "load",
+      value: function load(url) {
+        return new Promise(function (resolve, reject) {
+          var audio = wx.createInnerAudioContext();
+          audio.loop = false;
+          audio.autoplay = false;
+          audio.onCanplay(function () {
+            resolve(audio);
+          });
+          audio.onError(function (e) {
+            reject(e);
+          });
+          audio.src = url;
+        });
+      }
+    }, {
+      key: "mute",
+      value: function mute(_mute) {
+        return;
+      }
+    }, {
+      key: "volume",
+      value: function volume(v) {
+        return;
+      }
+    }]);
+
+    return Audio;
+  }();
 
   var has = Object.prototype.hasOwnProperty;
   var isArray = Array.isArray;
@@ -1313,9 +1164,9 @@
     }
   }
 
-  exports.AudioControlFactory = AudioControlFactory;
+  exports.Audio = Audio;
   exports.Canvas = Canvas;
-  exports.ImageControlFactory = ImageControlFactory;
+  exports.Image = Image;
   exports.Request = createInstance;
   exports.System = System;
   exports.Touch = TouchListen;
