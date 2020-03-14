@@ -1,138 +1,7 @@
 import _defineProperty from '@babel/runtime/helpers/defineProperty';
+import qs from 'qs';
 import _classCallCheck from '@babel/runtime/helpers/classCallCheck';
 import _createClass from '@babel/runtime/helpers/createClass';
-import qs from 'qs';
-
-/**
- * 获得一个canvas对象
- *
- * @param {String} key 特殊模版标识
- *
- * 打包模式为wxgame时
- * key取share则获得主域内开放canvas
- * key取shared则获得开发域内开放canvas
- */
-function Canvas(width, height) {
-  if (width == 'share' && typeof wx.getOpenDataContext == 'function') {
-    var context = wx.getOpenDataContext();
-
-    context.canvas.getContext = function () {
-      return context;
-    };
-
-    return context.canvas;
-  } else if (width == 'shared' && typeof wx.getSharedCanvas == 'function') {
-    return wx.getSharedCanvas();
-  } else if (width == 'main') {
-    return Canvas.main || (Canvas.main = wx.createCanvas());
-  }
-
-  if (!Canvas.main) Canvas.main = wx.createCanvas();
-  var canvas = wx.createCanvas();
-  if (width > 0) canvas.width = width;
-  if (height > 0) canvas.height = height;
-  return canvas;
-}
-
-/**
- * 获取系统参数
- * pixel 屏幕与设备像素比
- * width 屏幕宽度
- * height 屏幕高度
- * ratio 宽高比
- */
-function System() {
-  System.wx = wx.getSystemInfoSync();
-  System.pixel = System.wx.pixelRatio;
-  System.width = System.wx.screenWidth;
-  System.height = System.wx.screenHeight;
-  System.ratio = System.width / System.height;
-  return System;
-}
-
-function TouchListen() {
-  return function (event) {
-    wx.onTouchStart(function (e) {
-      return event.start(e);
-    });
-    wx.onTouchMove(function (e) {
-      return event.move(e);
-    });
-    wx.onTouchEnd(function (e) {
-      return event.end(e);
-    });
-    wx.onTouchCancel(function (e) {
-      return event.end(e);
-    });
-  };
-}
-
-var Image =
-/*#__PURE__*/
-function () {
-  function Image() {
-    _classCallCheck(this, Image);
-  }
-
-  _createClass(Image, [{
-    key: "load",
-    value: function load(url) {
-      return new Promise(function (resolve, reject) {
-        var image = wx.createImage();
-
-        image.onload = function () {
-          resolve(image);
-        };
-
-        image.onerror = function (e) {
-          reject(e);
-        };
-
-        image.key = image.src = url;
-      });
-    }
-  }]);
-
-  return Image;
-}();
-
-var Audio =
-/*#__PURE__*/
-function () {
-  function Audio() {
-    _classCallCheck(this, Audio);
-  }
-
-  _createClass(Audio, [{
-    key: "load",
-    value: function load(url) {
-      return new Promise(function (resolve, reject) {
-        var audio = wx.createInnerAudioContext();
-        audio.loop = false;
-        audio.autoplay = false;
-        audio.onCanplay(function () {
-          resolve(audio);
-        });
-        audio.onError(function (e) {
-          reject(e);
-        });
-        audio.src = url;
-      });
-    }
-  }, {
-    key: "mute",
-    value: function mute(_mute) {
-      return;
-    }
-  }, {
-    key: "volume",
-    value: function volume(v) {
-      return;
-    }
-  }]);
-
-  return Audio;
-}();
 
 var qsConfig = {
   arrayFormat: 'indices',
@@ -302,35 +171,192 @@ function createInstance(defaultConfig) {
   return axios;
 }
 
-/**
- * 将微信方法进行变种
- * @param {string} action 方法名
- * @param {Any} root 根元素/上下文
- * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
- */
+var Audio =
+/*#__PURE__*/
+function () {
+  function Audio(src) {
+    var _this = this;
 
-function Vary(action) {
-  var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
-  var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+    _classCallCheck(this, Audio);
 
-  if (mode == 2) {
-    return root[action];
-  } else if (mode == 1) {
-    return function (args, key) {
-      return new Promise(function (resolve) {
-        return resolve(root[action](key ? _defineProperty({}, key, args) : args));
-      });
-    };
-  } else if (mode == 0) {
-    return function (args, key) {
-      return new Promise(function (success, fail) {
-        return root[action](Object.assign({
-          success: success,
-          fail: fail
-        }, key ? _defineProperty({}, key, args) : args));
-      });
+    this._source = wx.createInnerAudioContext();
+    this._state = 0; //开始、载入中、载入完毕、已卸载
+
+    this._currentTime = 0;
+    this._loop = false;
+    this._volume = 1;
+    this._muted = false;
+    this._paused = true;
+
+    this._source.onCanplay(function () {
+      if (_this._state !== 1) return;
+      if (_this.oncanplay) _this.oncanplay();
+      _this._state = 2;
+      _this._source.loop = _this._loop;
+      _this._source.volume = _this._muted ? 0 : _this._volume;
+      if (_this._currentTime) _this._source.seek(_this._currentTime);
+      if (!_this._paused) _this._source.play();
+    });
+
+    this._source.onEnded(function () {
+      if (_this.onended) _this.onended();
+      _this.paused = !_this.loop;
+    });
+
+    if (src) this.src = src;
+  }
+
+  _createClass(Audio, [{
+    key: "play",
+    value: function play() {
+      this._paused = false;
+      if (this._state == 2) this._source.play();
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      this._paused = true;
+      if (this._state == 2) this._source.pause();
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+      if (this._state == 3) return;
+      this._state = 3;
+
+      this._source.stop();
+
+      this._source.destroy();
+    }
+  }, {
+    key: "duration",
+    get: function get() {
+      if (this._state !== 2) return 0;
+      return this._source.duration;
+    }
+  }, {
+    key: "currentTime",
+    get: function get() {
+      if (this._state !== 2) return 0;
+      return this._source.currentTime;
+    },
+    set: function set(currentTime) {
+      this._currentTime = currentTime;
+      if (this._state == 2) this._source.seek(currentTime);
+    }
+  }, {
+    key: "loop",
+    get: function get() {
+      return this._loop;
+    },
+    set: function set(loop) {
+      this._loop = loop;
+      if (this._state == 2) this._source.loop = loop;
+    }
+  }, {
+    key: "volume",
+    get: function get() {
+      return this._volume;
+    },
+    set: function set(volume) {
+      this._volume = volume;
+      if (this._state == 2) this._source.volume = volume;
+    }
+  }, {
+    key: "muted",
+    get: function get() {
+      return this._muted;
+    },
+    set: function set(muted) {
+      this._muted = muted;
+      if (this._state == 2) this._source.volume = muted ? 0 : this._volume;
+    }
+  }, {
+    key: "paused",
+    get: function get() {
+      return this._paused;
+    },
+    set: function set(paused) {
+      paused ? this.pause() : this.play();
+    }
+  }, {
+    key: "src",
+    get: function get() {
+      return this._source.src;
+    },
+    set: function set(src) {
+      if (this._state !== 0) return;
+      this._state = 1;
+      this._source.src = src;
+    }
+  }]);
+
+  return Audio;
+}();
+
+function polyfill() {
+  if (GameGlobal.axios) return;
+
+  if (!GameGlobal.document) {
+    GameGlobal.document = {};
+
+    GameGlobal.document.createElement = function (type) {
+      if (type == 'canvas') return wx.createCanvas();
+      if (type == 'image') return wx.createImage();
+      if (type == 'audio') return new Audio();
     };
   }
+
+  GameGlobal.document.mainCanvas = wx.createCanvas();
+
+  GameGlobal.Image = function () {
+    return wx.createImage();
+  };
+
+  GameGlobal.Audio = Audio;
+
+  GameGlobal.addEventListener = function (type, callback) {
+    if (type == 'touchstart') return wx.onTouchStart(callback);
+    if (type == 'touchmove') return wx.onTouchMove(callback);
+    if (type == 'touchend') return wx.onTouchEnd(callback);
+    if (type == 'touchcancel') return wx.onTouchCancel(callback);
+  };
+  /**
+   * 大致模拟axios
+   */
+
+
+  GameGlobal.axios = createInstance();
+  /**
+   * 将微信方法进行变种
+   * @param {string} action 方法名
+   * @param {Any} root 根元素/上下文
+   * @param {Number} mode 变种方式 0:Promise返回success和fail,1:Promise返回执行结果,2:原样子调用
+   */
+
+  GameGlobal.vary = function (action) {
+    var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : wx;
+    var mode = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    if (mode == 2) {
+      return root[action];
+    } else if (mode == 1) {
+      return function (args, key) {
+        return new Promise(function (resolve) {
+          return resolve(root[action](key ? _defineProperty({}, key, args) : args));
+        });
+      };
+    } else if (mode == 0) {
+      return function (args, key) {
+        return new Promise(function (success, fail) {
+          return root[action](Object.assign({
+            success: success,
+            fail: fail
+          }, key ? _defineProperty({}, key, args) : args));
+        });
+      };
+    }
+  };
 }
 
-export { Audio, Canvas, Image, createInstance as Request, System, TouchListen as Touch, Vary };
+export default polyfill;
